@@ -1,0 +1,43 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.hostname = "dev.vagrant.mysql"
+  config.vm.box_check_update = false
+
+  # config.vm.network "private_network", ip: "192.168.0.201"
+  # config.vm.network "public_network"
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "2048"
+    vb.name = "mysql-ub"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sed -i 's/http:\/\/archive.ubuntu.com\//http:\/\/ftp.daumkakao.com\//' /etc/apt/sources.list
+    apt-get update && apt-get upgrade
+  SHELL
+
+  config.omnibus.chef_version = :latest
+  config.berkshelf.enabled = true
+  # config.vm.provision :chef_client do |chef|
+  config.vm.provision :chef_solo do |chef|
+    # chef.cookbooks_path = File.expand_path('../../../support/cookbooks', __FILE__)
+    # chef.add_recipe 'chef-inator'
+    # chef.cookbooks_path = ["cookbooks"]
+    # chef.add_recipe "nginx"
+    chef.add_recipe "mysql"
+    chef.mysql_service 'foo' do
+      port '3306'
+      bind_address '0.0.0.0'
+      version '5.7'
+      data_dir '/data'
+      initial_root_password 'qwer1234!@#$'
+      action [:create, :start]
+    end
+  end
+  chef.provisioning_path = "/etc/chef"
+end
