@@ -29,4 +29,3 @@ Vagrant.configure("2") do |config|
     source ~/.bashrc
   SHELL
 end
-cd
