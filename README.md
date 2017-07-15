@@ -1,27 +1,48 @@
 # sb-vagrant
-vagrant 자주쓰는 설정들
+vagrant 자주쓰는 이미지 모음
 
-## test
-테스트용 서버. OS도 종류별로 셋팅. 이것저것 깔릴 수 있음
-* apt-get install mysql
-* apt-get install apache2
+## vagrant 환경 셋팅
 
-## chef
-chef테스트용
+1. vagrant https://www.vagrantup.com/
+2. hypervisor
+  hyperv, vmware, parallels..등도 지원이 되기도 하는게 해보니 virtualbox 말고 다른거 쓰려면 스트레스 받는다
+3. 플러그인 설치
+사하라 : 테스트환경 타임루프기능
+```
+https://github.com/ryuzee/sahara.git
+$ vagrant plugin install sahara
+```
+옴니버스 : chef 사용지원
+```
+https://github.com/chef/vagrant-omnibus
+$ vagrant plugin install vagrant-omnibus
+```
 
-## docker(ub/cent/debian...)
-도커 인스턴스 구동이 가능한 서버
-* 별내용없이 그냥 구동가능.
-* apt-get install docker.io docker-compose docker
+# 이미지 종류
 
-## docker 배포시스템 테스트용
+## test-ub
+종합 테스트서버
+이것저것 설치
+* mysql
+* apache2
+
+## chef-ub
+chef 전용 테스트
+* chef
+
+## docker-ub
+도커 인스턴스 구동 테스트용
+* docker.io docker-compose docker
+
+## docker-deploy-ub
+배포시스템 테스트용
 * dokku
 * flynn
-* docker-swarm
-* kubernetes
 
-##클러스터
+## cluster-ub
+3대짜리 클러스터
 * hadoop
 * spark
 * mesos
-
+* docker-kubernetes
+* docker-swarm

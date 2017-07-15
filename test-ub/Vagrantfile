@@ -3,6 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
+  config.vm.hostname = "dev.vagrant.test-ub"
   config.vm.box_check_update = false
 
   # config.vm.network "private_network", ip: "192.168.56.201"
@@ -14,20 +15,54 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.memory = "2048"
+    vb.name = "test-ub"
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    # default
 #    sed -i 's/http:\/\/archive.ubuntu.com\//http:\/\/ftp.daumkakao.com\//' /etc/apt/sources.list
     sed -i 's@http://archive.ubuntu.com/@http://ftp.daumkakao.com/@' /etc/apt/sources.list
     apt-get update -qq && apt-get upgrade -y
     apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+    # docker
     apt-get install -y docker docker.io docker-compose
-    # ruby environment
+    # ruby
+    ## environment
     git clone https://github.com/rbenv/rbenv.git /home/ubuntu/.rbenv
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> /home/ubuntu/.bashrc
     echo 'eval "$(rbenv init -)"' >> /home/ubuntu/.bashrc
     git clone https://github.com/rbenv/ruby-build.git /home/ubuntu/.rbenv/plugins/ruby-build
-    # echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-    source ~/.bashrc
+    # source ~/.bashrc
+    ## ruby install
+    sudo -H -u ubuntu rbenv install 2.3.3
+    sudo -H -u ubuntu rbenv global 2.3.3
+    sudo -H -u ubuntu gem install rails bundler
+    ## chef etc
+    sudo -H -u ubuntu gem install knife-solo chef knife
+    ## chef-dk
+    # wget https://packages.chef.io/files/stable/chefdk/2.0.26/ubuntu/16.04/chefdk_2.0.26-1_amd64.deb
+    # dpkg -i chefdk_2.0.26-1_amd64.deb
   SHELL
+
+  # mysql
+  config.omnibus.chef_version = :latest
+  config.berkshelf.enabled = true
+  # config.vm.provision :chef_client do |chef|
+  config.vm.provision :chef_solo do |chef|
+#    chef.version = "12.3.0"
+    # chef.cookbooks_path = File.expand_path('../../../support/cookbooks', __FILE__)
+    # chef.add_recipe 'chef-inator'
+    # chef.cookbooks_path = ["cookbooks"]
+    # chef.add_recipe "nginx"
+    chef.add_recipe "mysql"
+    chef.mysql_service 'foo' do
+      port '3306'
+      bind_address '0.0.0.0'
+      version '5.7'
+      data_dir '/data'
+      initial_root_password 'qwer1234!@#$'
+      action [:create, :start]
+    end
+    chef.provisioning_path = "/etc/chef"
+  end
 end
