@@ -7,6 +7,7 @@ vagrant 자주쓰는 이미지 모음
 2. hypervisor
   hyperv, vmware, parallels..등도 지원이 되기도 하는게 해보니 virtualbox 말고 다른거 쓰려면 스트레스 받는다
 3. 플러그인 설치
+
 사하라 : 테스트환경 타임루프기능
 ```
 https://github.com/ryuzee/sahara.git
@@ -16,6 +17,12 @@ $ vagrant plugin install sahara
 ```
 https://github.com/chef/vagrant-omnibus
 $ vagrant plugin install vagrant-omnibus
+```
+버크셸프 : chef 의존성 지원
+```
+Install the latest version of Vagrant
+Install the latest version of ChefDK
+$ vagrant plugin install vagrant-berkshelf
 ```
 
 # 이미지 종류
