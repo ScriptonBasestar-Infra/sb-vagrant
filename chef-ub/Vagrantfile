@@ -1,15 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-<<<<<<< HEAD
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.hostname = "dev.vagrant.chef"
-=======
 Vagrant.configure('2') do |config|
   config.vm.box = 'ubuntu/xenial64'
   config.vm.hostname = 'dev.vagrant.chef-ub'
->>>>>>> 8d8f32f7929956782db3190e94fdfdd83b90f6a2
   config.vm.box_check_update = false
   config.vm.provider "virtualbox"
 
