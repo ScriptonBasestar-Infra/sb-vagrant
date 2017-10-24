@@ -1,0 +1,86 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure('2') do |config|
+  config.vm.box = 'ubuntu/xenial64'
+  config.vm.hostname = 'dev.vagrant.test-ub'
+  # config.vm.box_check_update = false
+
+  # config.vm.synced_folder '../data', '/vagrant_data'
+  # config.vm.network 'public_network'
+  # config.vm.network 'private_network', :ip => '192.168.56.201', :type => 'dhcp', :name => 'vboxnet0', :adapter => 2
+  config.vm.network 'private_network', ip: '192.168.56.201', type: 'dhcp', name: 'vboxnet0'
+
+  config.vm.provider 'hyperv' do |vb|
+    vb.gui = false
+    vb.memory = '4096'
+    vb.name = 'test-ub'
+  end
+  
+  config.vm.provision 'shell', inline: <<-SHELL
+    # default
+    # sed -i 's/http:\/\/archive.ubuntu.com\//http:\/\/ftp.daumkakao.com\//' /etc/apt/sources.list
+    sed -i 's@http://archive.ubuntu.com/@http://ftp.daumkakao.com/@' /etc/apt/sources.list
+    sed -i 's@http://kr.archive.ubuntu.com/@http://ftp.daumkakao.com/@' /etc/apt/sources.list
+    apt-get update -qq && apt-get upgrade -y
+    apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+    # docker
+    apt-get install -y docker docker.io docker-compose
+    
+    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+    git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+    # echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
+    
+    ## chef-dk
+    wget https://packages.chef.io/files/stable/chefdk/2.0.26/ubuntu/16.04/chefdk_2.0.26-1_amd64.deb
+    dpkg -i chefdk_2.0.26-1_amd64.deb
+  SHELL
+
+  # config.vm.provision 'shell', privileged: false, inline: <<-SHELL
+  #   ## environment
+  #   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  #   git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+  #   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.profile
+  #   echo 'eval "$(rbenv init -)"' >> ~/.profile
+  #   source ~/.profile
+  #   ## ruby install
+  #   rbenv install 2.3.3
+  #   rbenv global 2.3.3
+  #   # gem update --system
+  #   # yes | gem update
+  #   gem install rails bundler
+  #   ## chef etc
+  #   gem install knife-solo chef knife berkshelf
+  # SHELL
+
+  # vagrant plugin
+  # omnibus
+  config.omnibus.chef_version = :latest
+  # config.omnibus.cache_packages = false
+  ## berkshelf
+  # config.berkshelf.enabled = true
+  # config.berkshelf.berksfile_path = './chef-work/Berksfile'
+
+  # config.vm.provision :chef_client do |chef|
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = ['../chef-work']
+    chef.add_recipe 'chef-work'
+    chef.run_list = [
+      'recipe[chef-work:mysql]',
+    ]
+    # chef.cookbooks_path = ['./cookbooks']
+    # chef.run_list = [
+    #     'recipe[apache2]',
+    #     'recipe[apache2::mod_php5]',
+    #     'recipe[mysql::client]',
+    #     'recipe[mysql::server]',
+    #     'recipe[php]',
+    #     'recipe[php::module_mysql]'
+    # ]
+    # https://stackoverflow.com/questions/15373209/issue-with-chef-knife-bootstrapping-a-vagrant-vm
+    # chef.add_recipe 'mysql::server'
+  end
+end
