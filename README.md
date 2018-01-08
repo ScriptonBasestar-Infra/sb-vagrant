@@ -58,3 +58,7 @@ chef 전용 테스트
 * mesos
 * docker-kubernetes
 * docker-swarm
+
+
+GCP - cloud shell
+https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu
