@@ -1,0 +1,9 @@
+{
+    "id": "local",
+    "host": "local.test",
+    "aliases": [
+        "www.local.test",
+        "test.com",
+        "www.test.com"
+    ]
+}

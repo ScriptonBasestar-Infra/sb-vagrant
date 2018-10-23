@@ -1,0 +1,65 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.hostname = 'dev.vagrant.ub18'
+  config.vm.box_check_update = false
+  config.vm.provider "virtualbox"
+
+  # config.vm.synced_folder '../data', '/vagrant_data'
+  # config.vm.network 'public_network'
+  # config.vm.network 'private_network', :ip => '192.168.56.201', :type => 'dhcp', :name => 'vboxnet0', :adapter => 2
+  # config.vm.network 'private_network', ip: '192.168.56.201', type: 'dhcp', name: 'vboxnet0'
+  # config.vm.network 'private_network', ip: '192.168.56.101', type: 'dhcp', name: 'VirtualBox Host-Only Ethernet Adapter'
+  config.vm.network "private_network", ip: "192.168.56.101"
+
+  config.vm.provider 'virtualbox' do |vb|
+    vb.gui = false
+    vb.memory = '4096'
+    vb.name = 'ub18'
+  end
+
+  config.vm.provision 'shell', inline: <<-SHELL
+    # default
+    # sed -i 's/http:\/\/archive.ubuntu.com\//http:\/\/ftp.daumkakao.com\//' /etc/apt/sources.list
+    sed -i 's@http://archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
+    sed -i 's@http://us.archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
+    sed -i 's@http://kr.archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
+    sed -i 's@http://security.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
+
+    apt-get update -qq && apt-get upgrade -y
+    apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common libffi-dev
+
+    # docker
+    # apt-get install -y docker docker.io docker-compose
+  SHELL
+
+  # run as not root
+  # privileged: false
+  # config.vm.provision 'shell', privileged: false, inline: <<-SHELL
+  Vagrant.configure("2") do |config|
+    $script = <<-SCRIPT
+    # ruby
+    git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+    git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+    # echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
+
+    rbenv install 2.5.1
+    rbenv global 2.5.1
+    gem update --system
+    yes | gem update
+    gem install rdoc rails pg bundler
+    SCRIPT
+    config.vm.provision "shell", inline: $script, privileged: false
+  end
+
+  # https://www.vagrantup.com/docs/provisioning/file.html
+  Vagrant.configure("2") do |config|
+    # ... other configuration
+    config.vm.provision "file", source: "../scripts", destination: "$HOME/scripts"
+  end
+end

@@ -1,1 +1,0 @@
-https://github.com/r8/vagrant-lamp

@@ -1,0 +1,9 @@
+.vagrant
+/data_bags/sites/*
+!/data_bags/sites/local.json
+/public
+!/public/local.test
+/nodes/*
+!/nodes/.gitkeep
+
+berks-cookbooks/
