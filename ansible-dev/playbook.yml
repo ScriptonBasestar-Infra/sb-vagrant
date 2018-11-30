@@ -1,0 +1,17 @@
+---
+- name: ansible-work
+  hosts: all
+  become: yes
+
+  # gather_facts: False
+  # pre_tasks:
+  #   - name: Install python for Ansible
+  #     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+  #     changed_when: False
+  #   - setup: # aka gather_facts
+  vars:
+    - redis_bind: 0.0.0.0
+      redis_password: passw0rd
+      redis_port: 6379
+  roles:
+    - DavidWittman.redis
