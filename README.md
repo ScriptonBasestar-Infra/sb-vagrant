@@ -1,12 +1,25 @@
 # sb-vagrant
-vagrant 자주쓰는 이미지 모음
 
-## vagrant 환경 셋팅
+개발환경 설정 저장소
 
-1. vagrant https://www.vagrantup.com/
-2. hypervisor
-  hyperv, vmware, parallels..등도 지원이 되기도 하는게 해보니 virtualbox 말고 다른거 쓰려면 스트레스 받는다
-3. 플러그인 설치
+## Vagrant!!
+
+### docker가 아닌 vagrant인 이유는..?
+
+docker는 윈도우, 맥, 리눅스 환경이 묘하게 조금씩 다르다.
+vagrant는 hypervisor를 돌리니까 아예 가상환경이라 더 편함.
+셋다 virtualbox를 쓸 수도 있고 안 써도 되고
+
+### Hypervisor
+hyperv, vmware, parallels..등도 지원이 되기도 하는게 해보니 virtualbox 말고 다른거 쓰려면 스트레스 받는다
+이미지가 없는 경우도 많고
+
+### 설치
+
+#### 프로그램 설치
+다운로드, apt, brew ...
+
+#### 플러그인 설치
 
 사하라 : 테스트환경 타임루프기능
 ```
@@ -24,41 +37,6 @@ Install the latest version of Vagrant
 Install the latest version of ChefDK
 $ vagrant plugin install vagrant-berkshelf
 ```
-
-berks 이용 설정파일 받아와야함
-
+아래 명령으로 의존성 받아올 수 있음
 $ berks vendor cookbooks
-
-
-# 이미지 종류
-
-## test-ub
-종합 테스트서버
-이것저것 설치
-* mysql
-* apache2
-
-## chef-ub
-chef 전용 테스트
-* chef
-
-## docker-ub
-도커 인스턴스 구동 테스트용
-* docker.io docker-compose docker
-
-## docker-deploy-ub
-배포시스템 테스트용
-* dokku
-* flynn
-
-## cluster-ub
-3대짜리 클러스터
-* hadoop
-* spark
-* mesos
-* docker-kubernetes
-* docker-swarm
-
-
-GCP - cloud shell
-https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu
+커뮤니티 쿡북이 상태가 안좋아서 대부분 별도로 만들어야 하니 신경 쓸 필요 없음
