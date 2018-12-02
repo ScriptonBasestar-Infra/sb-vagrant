@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
     
             nodex.vm.provider 'virtualbox' do |vb|
                 vb.gui = false
-                vb.memory = '2048'
+                vb.memory = '4096'
                 vb.name = "ansible-dev-node#{i}"
             end
     

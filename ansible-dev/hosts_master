@@ -1,7 +1,7 @@
 [all:vars]
 env=local
-[web]
-192.168.5.111
-[web:vars]
+[master]
+192.168.56.110
+[master:vars]
 ansible_ssh_user=root
 ansible_ssh_private_key_file=/home/perwagner/.ssh/id_rsa
