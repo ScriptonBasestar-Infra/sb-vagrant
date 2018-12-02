@@ -11,11 +11,17 @@
 
 galaxy 활용
 
+* DavidWittman.redis
+  * redis sentinel
 * mysql master - slave
-* redis sentinel
 * postgresql master
 * ehcache
 * hdfs cluster
 * nginx master
 * cassandra
+
+https://docs.ansible.com/ansible/latest/modules/shell_module.html?highlight=shell
+https://docs.ansible.com/ansible/latest/reference_appendices/galaxy.html
+
+ansible-playbook 
 
