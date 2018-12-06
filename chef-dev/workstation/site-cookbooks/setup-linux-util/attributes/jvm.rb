@@ -1,0 +1,1 @@
+default['openjdk']['version'] = 8
