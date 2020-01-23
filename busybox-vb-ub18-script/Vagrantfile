@@ -1,13 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# RUBY_V = File.open("./.ruby-version") { |f| f.read }.chomp
-RUBY_V = "2.6.5"
-
-$apt_script = <<SCRIPT
-sudo apt-get update
-sudo apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev libmysqlclient-dev
-SCRIPT
+RUBY_V = File.open("../.ruby-version") { |f| f.read }.chomp
 
 $rbenv_script = <<SCRIPT
 if [ ! -d ~/.rbenv ]; then
@@ -24,21 +18,22 @@ export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 eval "$(rbenv init -)"
 if [ ! -e .rbenv/versions/#{RUBY_V} ]; then
   rbenv install #{RUBY_V}
+  rbenv global #{RUBY_V}
 fi
-cd /vagrant
+cd /home/vagrant
 if [ ! -e /home/vagrant/.rbenv/shims/bundle ]; then
   gem install bundler
   rbenv rehash
 fi
-bundle install
+gem update --system
+yes | gem update
+gem install rdoc rails bundler pg mysql2
 SCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
-  # config.vm.box = "bento/ubuntu-18.04"
-  config.vm.hostname = 'dev.vagrant.ub18'
+  config.vm.hostname = 'busybox-hv-ub18-script'
   config.vm.box_check_update = false
-  config.vm.provider "virtualbox"
 
   # config.vm.synced_folder '../data', '/vagrant_data'
   # config.vm.network 'public_network'
@@ -50,28 +45,38 @@ Vagrant.configure("2") do |config|
   config.vm.provider 'virtualbox' do |vb|
     vb.gui = false
     vb.memory = '4096'
-    vb.name = 'ub18'
+    vb.name = 'busybox-hv-ub18-script'
   end
 
   config.vm.provision 'shell', inline: <<-SHELL
-    # default
-    # sed -i 's/http:\/\/archive.ubuntu.com\//http:\/\/ftp.daumkakao.com\//' /etc/apt/sources.list
-    sed -i 's@http://archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
-    sed -i 's@http://us.archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
-    sed -i 's@http://kr.archive.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
-    sed -i 's@http://security.ubuntu.com/@http://mirror.kakao.com/@' /etc/apt/sources.list
-
+    # sed -i 's/http:\/\/archive.ubuntu.com//http:\/\/ftp.daumkakao.com//' /etc/apt/sources.list
+    sed -i 's@http://archive.ubuntu.com@http://mirror.kakao.com@g' /etc/apt/sources.list
+    sed -i 's@http://us.archive.ubuntu.com@http://mirror.kakao.com@g' /etc/apt/sources.list
+    sed -i 's@http://kr.archive.ubuntu.com@http://mirror.kakao.com@g' /etc/apt/sources.list
+    sed -i 's@http://security.ubuntu.com@http://mirror.kakao.com@g' /etc/apt/sources.list
     apt-get update -qq && apt-get upgrade -y
-    apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common libffi-dev
+    apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+
+    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    apt-get update && apt-get install -y google-cloud-sdk
 
     # docker
-    # apt-get install -y docker docker.io docker-compose
-  SHELL
+    apt install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    apt update
 
+    apt install -y docker-ce docker-ce-cli containerd.io docker-compose
+
+    # to install gem pg
+    apt install -y libpq-dev libmysqlclient-dev
+    usermod -aG docker vagrant
+  SHELL
 
   config.ssh.forward_agent = true
 
-  config.vm.provision :shell, inline: $apt_script
   config.vm.provision :shell, privileged: false, inline: $rbenv_script
 
   # https://www.vagrantup.com/docs/provisioning/file.html
