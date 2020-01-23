@@ -2,6 +2,18 @@
 
 개발환경 설정 저장소
 
+## 용도
+
+이제 개발용으로는 도커가 있어서 busybox 작성용으로는 크게 의미가 없다.
+
+packer, ansible, chef, puppet, saltstack 등등 테스트용
+
+## ansible
+한개씩\
+`ansible-galaxy install -p redis DavidWittman.redis`\
+정의된거 모두다\
+`ansible-galaxy install -p roles -r requirements.yml`
+
 ## Vagrant!!
 
 ### docker가 아닌 vagrant인 이유는..?
