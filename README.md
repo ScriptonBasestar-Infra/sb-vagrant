@@ -1,54 +1,72 @@
-# sb-vagrant
+sb-vagrant
+==========
 
-개발환경 설정 저장소
+용도
+---
 
-## 용도
+이제 개발용으로는 도커가 있어서 busybox 용도로는 많이 쓰지 않는다
 
-이제 개발용으로는 도커가 있어서 busybox 작성용으로는 크게 의미가 없다.
+* 윈도우, 맥, 리눅스 특정 환경이 필요할 때
+* packer, ansible, chef, puppet, saltstack 등등 테스트
 
-packer, ansible, chef, puppet, saltstack 등등 테스트용
+사용기술
+------
 
-## ansible
-한개씩\
-`ansible-galaxy install -p redis DavidWittman.redis`\
-정의된거 모두다\
-`ansible-galaxy install -p roles -r requirements.yml`
+* Vagrant!!
+* Ansible
+* Chef
+* Hypervisor
+  * Virtualbox
+  * HyperV
 
-## Vagrant!!
+케이스
+----
 
-### docker가 아닌 vagrant인 이유는..?
+### 이미지가 없을 때
 
-docker는 윈도우, 맥, 리눅스 환경이 묘하게 조금씩 다르다.
-vagrant는 hypervisor를 돌리니까 아예 가상환경이라 더 편함.
-셋다 virtualbox를 쓸 수도 있고 안 써도 되고
+packer 활용 <https://github.com/ScriptonBasestar-devops/packer-boxes>
 
-### Hypervisor
-hyperv, vmware, parallels..등도 지원이 되기도 하는게 해보니 virtualbox 말고 다른거 쓰려면 스트레스 받는다
-이미지가 없는 경우도 많고
+### network
+
+  config.vm.synced_folder '../data', '/vagrant_data'
+  config.vm.network 'public_network'
+  config.vm.network 'private_network', :ip => '192.168.56.201', :type => 'dhcp', :name => 'vboxnet0', :adapter => 2
+  config.vm.network 'private_network', ip: '192.168.56.201', type: 'dhcp', name: 'vboxnet0'
+  config.vm.network 'private_network', ip: '192.168.56.101', type: 'dhcp', name: 'VirtualBox Host-Only Ethernet Adapter'
+  config.vm.network "private_network", ip: "192.168.56.101"
 
 ### 설치
 
 #### 프로그램 설치
-다운로드, apt, brew ...
 
-#### 플러그인 설치
+* virtualbox
+* vagrant
 
-사하라 : 테스트환경 타임루프기능
-```
-https://github.com/ryuzee/sahara.git
+#### 플러그인
+
+##### 사하라 : 테스트환경 타임루프기능
+
+<https://github.com/ryuzee/sahara.git>
+
+```bash
 $ vagrant plugin install sahara
 ```
-옴니버스 : chef 사용지원
-```
-https://github.com/chef/vagrant-omnibus
+
+##### 옴니버스 : chef 사용지원
+
+<https://github.com/chef/vagrant-omnibus>
+
+```bash
 $ vagrant plugin install vagrant-omnibus
 ```
-버크셸프 : chef 의존성 지원
+
+```bash
+vagrant sandbox on
+vagrant sandbox commit
+vagrant sandbox rollback
+vagrant sandbox off
 ```
-Install the latest version of Vagrant
-Install the latest version of ChefDK
-$ vagrant plugin install vagrant-berkshelf
-```
-아래 명령으로 의존성 받아올 수 있음
-$ berks vendor cookbooks
-커뮤니티 쿡북이 상태가 안좋아서 대부분 별도로 만들어야 하니 신경 쓸 필요 없음
+
+##### Test Kitchen
+
+<https://github.com/test-kitchen/kitchen-vagrant>

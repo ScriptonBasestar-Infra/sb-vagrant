@@ -17,7 +17,7 @@
 
 - name: configure the master redis server
   hosts: master
-  sudo: yes
+  become: yes
   vars:
     - redis_bind: 0.0.0.0
       redis_password: passw0rd
@@ -27,7 +27,7 @@
 
 - name: configure redis slaves
   hosts: node
-  sudo: yes
+  become: yes
   vars:
     - redis_bind: 0.0.0.0
       redis_password: passw0rd
@@ -39,7 +39,6 @@
 
 - name: ansible-mysql
   hosts: all
-  become: yes
   vars:
     - mysql_root_password: passw0rd
       # mysql_databases:

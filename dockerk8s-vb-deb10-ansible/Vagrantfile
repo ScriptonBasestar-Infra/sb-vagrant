@@ -5,16 +5,14 @@ Vagrant.configure("2") do |config|
   config.vm.define :master do |master|
     master.vm.box = "debian/buster64"
     master.vm.box_check_update = false
-    master.vm.provider "virtualbox"
 
     master.vm.provider 'virtualbox' do |vb|
         vb.gui = false
         vb.memory = '2048'
-        vb.name = 'ansible-dev-master'
+        vb.name = "k8s-vb-deb10-ansible-master"
     end
 
-    # config.vm.hostname = 'dev.vagrant.ansible-dev'
-    master.vm.hostname = 'ansible-dev-master'
+    master.vm.hostname = "k8s-vb-deb10-ansible-master"
     master.vm.network "private_network", ip: "192.168.56.111"
   end
 
@@ -28,22 +26,23 @@ Vagrant.configure("2") do |config|
         nodex.vm.provider 'virtualbox' do |vb|
             vb.gui = false
             vb.memory = '2048'
-            vb.name = "ansible-dev-node#{i}"
+            vb.name = "k8s-vb-deb10-ansible-slave#{i}"
         end
 
-        # config.vm.hostname = 'dev.vagrant.ansible-dev'
-        nodex.vm.hostname = 'ansible-dev-node'
+        nodex.vm.hostname = "k8s-vb-deb10-ansible-slave#{i}"
         nodex.vm.network "private_network", ip: "192.168.56.1#{i}"
     end
   end
 
-  config.vm.provision 'shell', inline: <<-SHELL 
-    sed -i 's@http://deb.debian.org/debian@http://ftp.lanet.kr@' /etc/apt/sources.list
-    sed -i 's@http://ftp.kr.debian.org/debian@http://ftp.lanet.kr@' /etc/apt/sources.list
-    apt-get update -qq && apt-get upgrade -y
-  SHELL
+  # config.vm.provision 'shell', inline: <<-SHELL 
+  #   sed -i 's@http://deb.debian.org@http://ftp.lanet.kr@g' /etc/apt/sources.list
+  #   sed -i 's@http://ftp.kr.debian.org@http://ftp.lanet.kr@g' /etc/apt/sources.list
+  #   apt-get update -qq && apt-get upgrade -y
+  # SHELL
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook.yml"
+    ansible.playbook = "provisioning/playbook.yml"
+    ansible.inventory_path = "provisioning/inventory"
+    ansible.become = true
   end
 end
