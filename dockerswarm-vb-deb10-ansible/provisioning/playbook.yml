@@ -1,0 +1,32 @@
+---
+- name: ansible-default
+  hosts: all
+  become: yes
+  gather_facts: yes
+  pre_tasks:
+    - name: Change debian repo
+      shell: sed -i 's@http://deb.debian.org@http://ftp.lanet.kr@g' /etc/apt/sources.list
+    # - name: Change debian security
+      # shell: sed -i 's@http://security.debian.org@http://ftp.lanet.kr@g' /etc/apt/sources.list
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      changed_when: False
+    # - setup: # aka gather_facts
+  roles:
+    - role: geerlingguy.git
+    - role: geerlingguy.docker
+      become: yes
+
+- name: ansible-master
+  hosts: master
+  become: yes
+  roles:
+    - role: geerlingguy.kubernetes
+      become: yes
+
+- name: ansible-slaves
+  hosts: slaves
+  become: yes
+  roles:
+    - role: geerlingguy.kubernetes
+      become: yes

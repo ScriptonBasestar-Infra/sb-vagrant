@@ -1,0 +1,29 @@
+# git role
+ansible_os_family: Debian
+git_packages:
+  - git
+
+# docker role
+pip_install_packages:
+  - name: docker
+ansible_distribution: debian
+ansible_distribution_release: buster
+docker_apt_release_channel: stable
+
+docker_install_compose: true
+# docker_compose_version: "1.22.0"
+docker_users:
+  - vagrant
+
+# k8s role
+kubernetes_allow_pods_on_master: true
+kubernetes_version: '1.17'
+# kubernetes_pod_network:
+#   # Flannel CNI.
+#   cni: 'flannel'
+#   cidr: '10.244.0.0/16'
+#   # Calico CNI.
+#   # cni: 'calico'
+#   # cidr: '192.168.0.0/16'
+# kubernetes_pod_network_cidr: 10.244.0.0/16
+# kubernetes_yum_arch: x86_64

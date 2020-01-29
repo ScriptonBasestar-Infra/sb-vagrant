@@ -1,0 +1,8 @@
+- geerlingguy.security
+- geerlingguy.swap
+- geerlingguy.docker
+- geerlingguy.kubernetes
+- geerlingguy.git
+- geerlingguy.haproxy
+- geerlingguy.nginx
+# - geerlingguy.java

@@ -1,0 +1,4 @@
+boxname: kmm/ubuntu-xenial64
+hostname: busybox-hv-ub16-script
+vmname: busybox-hv-ub16-script
+vmmemory: 4096

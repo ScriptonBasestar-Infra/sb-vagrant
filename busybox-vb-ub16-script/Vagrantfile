@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 RUBY_V = File.open("../.ruby-version") { |f| f.read }.chomp
+Vagrant.require_version ">= 1.7.0"
 
 $rbenv_script = <<SCRIPT
 if [ ! -d ~/.rbenv ]; then
