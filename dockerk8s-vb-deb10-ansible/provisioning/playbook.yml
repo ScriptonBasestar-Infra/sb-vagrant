@@ -17,16 +17,16 @@
     - role: geerlingguy.docker
       become: yes
 
-- name: ansible-master
-  hosts: master
-  become: yes
-  roles:
-    - role: geerlingguy.kubernetes
-      become: yes
+# - name: ansible-master
+#   hosts: master
+#   become: yes
+#   roles:
+#     - role: geerlingguy.kubernetes
+#       become: yes
 
-- name: ansible-slaves
-  hosts: slaves
-  become: yes
-  roles:
-    - role: geerlingguy.kubernetes
-      become: yes
+# - name: ansible-slaves
+#   hosts: slaves
+#   become: yes
+#   roles:
+#     - role: geerlingguy.kubernetes
+#       become: yes

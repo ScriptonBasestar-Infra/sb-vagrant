@@ -1,7 +1,7 @@
 - geerlingguy.security
 - geerlingguy.swap
 - geerlingguy.docker
-- geerlingguy.kubernetes
+- src: https://github.com/ScriptonBasestar-devops/ansible-role-kubernetes
 - geerlingguy.git
 - geerlingguy.haproxy
 - geerlingguy.nginx
